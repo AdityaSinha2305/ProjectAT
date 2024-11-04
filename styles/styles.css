@@ -1,0 +1,26 @@
+/* Navbar */
+.navbar-nav {
+    margin-left: 85%;
+}
+
+/* Navbar ends */
+
+/* Main starts */
+main {
+    margin: 90px;
+}
+
+/* card starts */
+.card-body {
+    text-align: center;
+}
+
+iframe {
+    margin: 1rem 1.5rem;
+    border-radius: 5%;
+    width: 400px;
+    height: 300px;
+}
+/* card ends */
+
+/* Main ends */
