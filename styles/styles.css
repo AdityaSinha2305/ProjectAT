@@ -21,6 +21,19 @@ iframe {
     width: 400px;
     height: 300px;
 }
+
+#popoverContent {
+    display: none; /* Hidden by default */
+    position: absolute;
+    z-index: 1000;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 30px;
+
+}
+
 /* card ends */
 
 /* Main ends */
