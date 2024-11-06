@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Circular Featured Video Display</title>
+<style>
+  body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #111; overflow: hidden; }
+  .wrapper { perspective: 1500px; }
+  .orbit-container {
+    position: relative;
+    width: 600px; height: 600px;
+    transform-style: preserve-3d;
+  }
+  .video-item {
+    position: absolute;
+    width: 250px; height: 140px;
+    top: 35%; left: 40%;
+    margin-top: -70px;
+    margin-left: -125px;
+    opacity: 0.3;
+    filter: blur(4px);
+    transition: transform 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
+    transform-style: preserve-3d;
+  }
+  .video-item.featured {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateZ(300px) scale(1.5); /* Larger scale for the featured video */
+  }
+  .video-item.hidden {
+    opacity: 0; /* Hide the back video completely */
+  }
+  iframe {
+    border-radius: 10%;
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="orbit-container" id="orbit">
+      <!-- Video items with initial positions -->
+      <div class="video-item featured" style="transform: rotateY(0deg) translateZ(300px);">
+        <iframe class="video-iframe" width="380" height="300" src="https://www.youtube.com/embed/uc5dAuGEa7M" allowfullscreen></iframe>
+      </div>
+      <div class="video-item" style="transform: rotateY(90deg) translateZ(300px);">
+        <iframe class="video-iframe" width="380" height="300" src="https://www.youtube.com/embed/PA11WWPVlp8" allowfullscreen></iframe>
+      </div>
+      <div class="video-item" style="transform: rotateY(180deg) translateZ(300px);">
+        <iframe class="video-iframe" width="380" height="300" src="https://www.youtube.com/embed/oH6Q9KaOY44" allowfullscreen></iframe>
+      </div>
+      <!-- <div class="video-item" style="transform: rotateY(270deg) translateZ(300px);">
+        <iframe class="video-iframe" width="250" height="140" src="https://www.youtube.com/embed/VIDEO_ID_4?enablejsapi=1&mute=1" allowfullscreen></iframe>
+      </div> -->
+    </div>
+  </div>
+
+<script>
+  const videos = document.querySelectorAll('.video-item');
+  const iframes = document.querySelectorAll('.video-iframe');
+  let currentIndex = 0;
+
+  function sendMessageToIframe(iframe, command) {
+    iframe.contentWindow.postMessage(JSON.stringify(command), '*');
+  }
+
+  function playVideo(index) {
+    sendMessageToIframe(iframes[index], { event: "command", func: "playVideo" });
+  }
+
+  function pauseVideo(index) {
+    sendMessageToIframe(iframes[index], { event: "command", func: "pauseVideo" });
+  }
+
+  function showNextVideo() {
+    // Reset classes for all videos
+    videos.forEach(video => video.classList.remove('featured', 'hidden'));
+
+    // Pause the currently featured video
+    pauseVideo(currentIndex);
+
+    // Set the next video as featured and play it
+    currentIndex = (currentIndex + 1) % videos.length;
+    const nextVideo = videos[currentIndex];
+    nextVideo.classList.add('featured');
+    playVideo(currentIndex);
+
+    // Hide the opposite video in the back
+    const oppositeIndex = (currentIndex + Math.floor(videos.length / 2)) % videos.length;
+    videos[oppositeIndex].classList.add('hidden');
+
+    // Update circular positioning for smooth transition
+    videos.forEach((video, index) => {
+      const angle = (360 / videos.length) * ((index - currentIndex + videos.length) % videos.length);
+      video.style.transform = `rotateY(${angle}deg) translateZ(300px)`;
+    });
+  }
+
+  // Set initial play for the first featured video
+  playVideo(currentIndex);
+
+  // Change featured video every 5 seconds
+  setInterval(showNextVideo, 5000);
+</script>
+</body>
+</html>
